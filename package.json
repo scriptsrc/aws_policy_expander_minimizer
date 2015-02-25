@@ -1,0 +1,13 @@
+{
+  "name": "aws_policy_expander_minimizer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monkeysecurity/aws_policy_expander_minimizer.git"
+  },
+  "devDependencies": {
+    "karma" : "~0.12.0",
+    "karma-dart" : "~0.2.6",
+    "karma-chrome-launcher": "~0.1.3",
+    "karma-junit-reporter": "~0.2.1"
+  }
+}
