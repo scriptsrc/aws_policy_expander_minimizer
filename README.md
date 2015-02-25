@@ -113,4 +113,4 @@ A simple usage example:
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: http://example.com/issues/replaceme
+[tracker]: https://github.com/monkeysecurity/aws_policy_expander_minimizer/issues
