@@ -1,6 +1,7 @@
 .buildlog
 .DS_Store
 .idea
+node_modules
 .pub/
 build/
 packages
