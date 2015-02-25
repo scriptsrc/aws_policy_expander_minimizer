@@ -1,4 +1,5 @@
-# aws\_policy\_expander_minimizer
+aws\_policy\_expander_minimizer [![Build Status](https://travis-ci.org/monkeysecurity/aws_policy_expander_minimizer.svg?branch=master)](https://travis-ci.org/monkeysecurity/aws_policy_expander_minimizer)
+======================================
 
 A library for expanding and minimizing AWS policies.
 
