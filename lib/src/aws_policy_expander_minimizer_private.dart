@@ -138,7 +138,7 @@ class PrivateMinimizer extends PrivateExpander {
       }
 
       if (!found_prefix) {
-        minimized_actions.add(prefixes[-1]);
+        minimized_actions.add(prefixes.last);
       }
     }
 
