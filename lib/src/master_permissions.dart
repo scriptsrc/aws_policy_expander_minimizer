@@ -1,5 +1,6 @@
 /// The contents of this file come from Amazon.
-/// The AWS Policy Generator loads a file from the following URL:
+/// The AWS Policy Generator (http://awspolicygen.s3.amazonaws.com/policygen.html)
+///  loads a file from the following URL:
 /// https://awsiamconsole.s3.amazonaws.com/iam/assets/js/bundles/policies.js
 /// From the browser console, you can extract this data like:
 /// JSON.stringify(app.PolicyEditorConfig.serviceMap)
@@ -8,7 +9,23 @@
 /// Assume Amazon holds the original copyright for this data.
 /// Contact Patrick Kelley <pkelley@netflix.com> with any questions.
 
-library aws_policy_expander_minimizer.base;
+library aws_policy_expander_minimizer.permissions;
+
+// Date of update: March 30th, 2015
+// The following autoscaling permissions were not in the policy generator
+//  and were obtained from AWS manually:
+//  autoscaling:AttachInstances
+//  autoscaling:CompleteLifecycleAction
+//  autoscaling:DeleteLifecycleHooks
+//  autoscaling:DescribeAccountLimits
+//  autoscaling:DescribeLifecycleHooksTypes
+//  autoscaling:DescribeLifecycleHooks
+//  autoscaling:DescribeTerminationPolicyTypes
+//  autoscaling:DetachInstances
+//  autoscaling:EnterStandby
+//  autoscaling:ExitStandby
+//  autoscaling:PutLifecycleHook
+//  autoscaling:RecordLifecycleActionHeartbeat
 
 Map AWS_PERMISSIONS = {
     "Amazon AppStream": {
@@ -34,22 +51,28 @@ Map AWS_PERMISSIONS = {
     "Auto Scaling": {
         "StringPrefix": "autoscaling",
         "Actions": [
+            "AttachInstances",
+            "CompleteLifecycleAction",
             "CreateAutoScalingGroup",
             "CreateLaunchConfiguration",
             "CreateOrUpdateScalingTrigger",
             "CreateOrUpdateTags",
             "DeleteAutoScalingGroup",
             "DeleteLaunchConfiguration",
+            "DeleteLifecycleHooks",
             "DeleteNotificationConfiguration",
             "DeletePolicy",
             "DeleteScheduledAction",
             "DeleteTags",
             "DeleteTrigger",
+            "DescribeAccountLimits",
             "DescribeAdjustmentTypes",
             "DescribeAutoScalingGroups",
             "DescribeAutoScalingInstances",
             "DescribeAutoScalingNotificationTypes",
             "DescribeLaunchConfigurations",
+            "DescribeLifecycleHooksTypes",
+            "DescribeLifecycleHooks",
             "DescribeMetricCollectionTypes",
             "DescribeNotificationConfigurations",
             "DescribePolicies",
@@ -57,13 +80,19 @@ Map AWS_PERMISSIONS = {
             "DescribeScalingProcessTypes",
             "DescribeScheduledActions",
             "DescribeTags",
+            "DescribeTerminationPolicyTypes",
             "DescribeTriggers",
+            "DetachInstances",
             "DisableMetricsCollection",
             "EnableMetricsCollection",
+            "EnterStandby",
             "ExecutePolicy",
+            "ExitStandby",
+            "PutLifecycleHook",
             "PutNotificationConfiguration",
             "PutScalingPolicy",
             "PutScheduledUpdateGroupAction",
+            "RecordLifecycleActionHeartbeat",
             "ResumeProcesses",
             "SetDesiredCapacity",
             "SetInstanceHealth",
@@ -274,6 +303,7 @@ Map AWS_PERMISSIONS = {
             "DeleteTrail",
             "DescribeTrails",
             "GetTrailStatus",
+            "LookupEvents",
             "StartLogging",
             "StopLogging",
             "UpdateTrail"
@@ -1053,6 +1083,7 @@ Map AWS_PERMISSIONS = {
             "ModifyNetworkInterfaceAttribute",
             "ModifyReservedInstances",
             "ModifySnapshotAttribute",
+            "ModifySubnetAttribute",
             "ModifyVolumeAttribute",
             "ModifyVpcAttribute",
             "MonitorInstances",
@@ -1231,20 +1262,35 @@ Map AWS_PERMISSIONS = {
         "StringPrefix": "elasticache",
         "Actions": [
             "AuthorizeCacheSecurityGroupIngress",
+            "CopySnapshot",
             "CreateCacheCluster",
             "CreateCacheParameterGroup",
             "CreateCacheSecurityGroup",
+            "CreateCacheSubnetGroup",
+            "CreateSnapshot",
             "DeleteCacheCluster",
             "DeleteCacheParameterGroup",
             "DeleteCacheSecurityGroup",
+            "DeleteCacheSubnetGroup",
+            "DeleteReplicationGroup",
+            "DeleteSnapshot",
             "DescribeCacheClusters",
+            "DescribeCacheEngineVersions",
             "DescribeCacheParameterGroups",
             "DescribeCacheParameters",
             "DescribeCacheSecurityGroups",
+            "DescribeCacheSubnetGroups",
             "DescribeEngineDefaultParameters",
             "DescribeEvents",
+            "DescribeReplicationGroups",
+            "DescribeReservedCacheNodes",
+            "DescribeReservedCacheNodesOfferings",
+            "DescribeSnapshots",
             "ModifyCacheCluster",
             "ModifyCacheParameterGroup",
+            "ModifyCacheSubnetGroup",
+            "ModifyReplicationGroup",
+            "PurchaseReservedCacheNodesOffering",
             "RebootCacheCluster",
             "ResetCacheParameterGroup",
             "RevokeCacheSecurityGroupIngress"
@@ -1300,6 +1346,7 @@ Map AWS_PERMISSIONS = {
             "DescribeDataset",
             "DescribeIdentityUsage",
             "DescribeIdentityPoolUsage",
+            "GetIdentityPoolConfiguration",
             "ListDatasets",
             "ListIdentityPoolUsage",
             "ListRecords",
@@ -1557,6 +1604,7 @@ Map AWS_PERMISSIONS = {
             "ListContainerInstances",
             "ListTaskDefinitions",
             "ListTasks",
+            "Poll",
             "RegisterContainerInstance",
             "RegisterTaskDefinition",
             "RunTask",
