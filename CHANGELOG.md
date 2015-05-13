@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.4
+
+Added new permissions found in the AWS Policy Generator
+Added new Lambda, Machine Learning, and WorkSpaces Application Manager permissions.
+
 ## 0.0.3
 
 Added new permissions found in the AWS Policy Generator.
