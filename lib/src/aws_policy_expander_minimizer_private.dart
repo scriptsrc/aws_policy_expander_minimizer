@@ -42,6 +42,22 @@ class PrivateExpander {
     // unreachable code so Dart Editor stops complaining.
     return [];
   }
+
+  List<String> expandWildcardNotAction(var not_action) {
+    Set<String> action_set = new Set<String>.from(master_permissions);
+    if (not_action is String) {
+      return action_set.difference(new Set<String>.from(expandWildcardAction(not_action))).toList();
+    } else if (not_action is List) {
+      for (var item in not_action) {
+        action_set = action_set.difference(new Set<String>.from(expandWildcardAction(item)));
+      }
+      return action_set.toList();
+    } else {
+        throw new InvalidInputException('expandWildcardNotAction requires a string or list of strings');
+    }
+    // unreachable code so Dart Editor stops complaining.
+    return [];
+  }
 }
 
 /// The minimizer extends the expander because
