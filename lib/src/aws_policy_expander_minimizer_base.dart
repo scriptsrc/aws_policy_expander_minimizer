@@ -38,7 +38,13 @@ class Expander {
   expandPolicy(var input_policy) {
     Map policy = JSON.decode(JSON.encode(input_policy));  // Deep Copy
     for (var statement in policy['Statement']) {
-      List<String> expanded_actions = pex.expandWildcardAction(statement['Action']);
+      List<String> expanded_actions;
+      if (statement.containsKey('Action')) {
+        expanded_actions = pex.expandWildcardAction(statement['Action']);
+      } else if (statement.containsKey('NotAction')) {
+        expanded_actions = pex.expandWildcardNotAction(statement['NotAction']);
+        statement.remove('NotAction');
+      }
       expanded_actions = (new Set.from(expanded_actions)).toList();
       expanded_actions.sort();
       statement['Action'] = expanded_actions;
