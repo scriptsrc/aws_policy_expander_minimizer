@@ -24,6 +24,7 @@ export PATH="$DART_SDK/bin:$PATH"
 export DARTIUM_BIN="$PWD/dartium/chrome"
 
 echo Installing all the dependencies
+pub get
 pub install
 
 echo Launching xvfb
