@@ -345,7 +345,6 @@ main() {
         "autoscaling:completelifecycleaction",
         "autoscaling:createautoscalinggroup",
         "autoscaling:createlaunchconfiguration",
-        "autoscaling:createorupdatescalingtrigger",
         "autoscaling:createorupdatetags",
         "autoscaling:deleteautoscalinggroup",
         "autoscaling:deletelaunchconfiguration",
@@ -354,7 +353,6 @@ main() {
         "autoscaling:deletepolicy",
         "autoscaling:deletescheduledaction",
         "autoscaling:deletetags",
-        "autoscaling:deletetrigger",
         "autoscaling:describeaccountlimits",
         "autoscaling:describeadjustmenttypes",
         "autoscaling:describeautoscalinggroups",
@@ -371,7 +369,6 @@ main() {
         "autoscaling:describescheduledactions",
         "autoscaling:describetags",
         "autoscaling:describeterminationpolicytypes",
-        "autoscaling:describetriggers",
         "autoscaling:detachinstances",
         "autoscaling:disablemetricscollection",
         "autoscaling:enablemetricscollection",
@@ -411,7 +408,6 @@ main() {
         "autoscaling:describescheduledactions",
         "autoscaling:describetags",
         "autoscaling:describeterminationpolicytypes",
-        "autoscaling:describetriggers"
       ]);
     });
   });
@@ -640,8 +636,11 @@ main() {
               "ec2:describecustomergateways",
               "ec2:describedhcpoptions",
               "ec2:describeexporttasks",
+              "ec2:describeflowlogs",
               "ec2:describeimageattribute",
               "ec2:describeimages",
+              "ec2:describeimportimagetasks",
+              "ec2:describeimportsnapshottasks",
               "ec2:describeinstanceattribute",
               "ec2:describeinstances",
               "ec2:describeinstancestatus",
@@ -663,6 +662,9 @@ main() {
               "ec2:describesnapshotattribute",
               "ec2:describesnapshots",
               "ec2:describespotdatafeedsubscription",
+              "ec2:describespotfleetinstances",
+              "ec2:describespotfleetrequesthistory",
+              "ec2:describespotfleetrequests",
               "ec2:describespotinstancerequests",
               "ec2:describespotpricehistory",
               "ec2:describesubnets",
