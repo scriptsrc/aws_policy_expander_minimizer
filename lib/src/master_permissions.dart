@@ -11,23 +11,31 @@
 
 library aws_policy_expander_minimizer.permissions;
 
-// Date of update: March 30th, 2015
-// The following autoscaling permissions were not in the policy generator
-//  and were obtained from AWS manually:
-//  autoscaling:AttachInstances
-//  autoscaling:CompleteLifecycleAction
-//  autoscaling:DeleteLifecycleHooks
-//  autoscaling:DescribeAccountLimits
-//  autoscaling:DescribeLifecycleHooksTypes
-//  autoscaling:DescribeLifecycleHooks
-//  autoscaling:DescribeTerminationPolicyTypes
-//  autoscaling:DetachInstances
-//  autoscaling:EnterStandby
-//  autoscaling:ExitStandby
-//  autoscaling:PutLifecycleHook
-//  autoscaling:RecordLifecycleActionHeartbeat
+// Date of update: 7 October 2015
 
 Map AWS_PERMISSIONS = {
+    "Amazon API Gateway": {
+        "StringPrefix": "execute-api",
+        "Actions": [
+            "invoke"
+        ],
+        "ARNFormat": "arn:aws:execute-api:<region>:<account_id>:<api_id>/<stage>/<method>/<api_specific_resource_path>",
+        "ARNRegex": "^arn:aws:execute-api:.+",
+        "HasResource": true
+    },
+    "Manage - Amazon API Gateway": {
+        "StringPrefix": "apigateway",
+        "Actions": [
+            "DELETE",
+            "GET",
+            "PATCH",
+            "POST",
+            "PUT"
+        ],
+        "ARNFormat": "arn:aws:apigateway:<region>::<api_gateway_resource_path>",
+        "ARNRegex": "^arn:aws:apigateway:.+",
+        "HasResource": true
+    },
     "Amazon AppStream": {
         "StringPrefix": "appstream",
         "Actions": [
@@ -55,7 +63,6 @@ Map AWS_PERMISSIONS = {
             "CompleteLifecycleAction",
             "CreateAutoScalingGroup",
             "CreateLaunchConfiguration",
-            "CreateOrUpdateScalingTrigger",
             "CreateOrUpdateTags",
             "DeleteAutoScalingGroup",
             "DeleteLaunchConfiguration",
@@ -64,7 +71,6 @@ Map AWS_PERMISSIONS = {
             "DeletePolicy",
             "DeleteScheduledAction",
             "DeleteTags",
-            "DeleteTrigger",
             "DescribeAccountLimits",
             "DescribeAdjustmentTypes",
             "DescribeAutoScalingGroups",
@@ -81,7 +87,6 @@ Map AWS_PERMISSIONS = {
             "DescribeScheduledActions",
             "DescribeTags",
             "DescribeTerminationPolicyTypes",
-            "DescribeTriggers",
             "DetachInstances",
             "DisableMetricsCollection",
             "EnableMetricsCollection",
@@ -99,6 +104,36 @@ Map AWS_PERMISSIONS = {
             "SuspendProcesses",
             "TerminateInstanceInAutoScalingGroup",
             "UpdateAutoScalingGroup"
+        ]
+    },
+    "AWS Device Farm": {
+        "HasResource": true,
+        "StringPrefix": "devicefarm",
+        "Actions": [
+            "CreateDevicePool",
+            "CreateProject",
+            "CreateUpload",
+            "GetDevice",
+            "GetDevicePool",
+            "GetDevicePoolCompatibility",
+            "GetJob",
+            "GetProject",
+            "GetRun",
+            "GetSuite",
+            "GetTest",
+            "GetUpload",
+            "ListArtifacts",
+            "ListDevicePools",
+            "ListDevices",
+            "ListJobs",
+            "ListProjects",
+            "ListRuns",
+            "ListSamples",
+            "ListSuites",
+            "ListTests",
+            "ListUniqueProblems",
+            "ListUploads",
+            "ScheduleRun"
         ]
     },
     "Elastic Load Balancing": {
@@ -196,33 +231,47 @@ Map AWS_PERMISSIONS = {
             "DeleteHealthCheck",
             "DeleteHostedZone",
             "DeleteReusableDelegationSet",
+            "DisableDomainAutoRenew",
             "DisassociateVPCFromHostedZone",
+            "EnableDomainAutoRenew",
             "GetChange",
+            "GetCheckerIpRanges",
+            "GetGeoLocation",
             "GetHealthCheck",
             "GetHealthCheckCount",
             "GetHealthCheckLastFailureReason",
             "GetHealthCheckStatus",
             "GetHostedZone",
+            "GetHostedZoneCount",
             "GetReusableDelegationSet",
+            "ListGeoLocations",
             "ListHealthChecks",
             "ListHostedZones",
+            "ListHostedZonesByName",
             "ListResourceRecordSets",
             "ListReusableDelegationSets",
             "ListTagsForResource",
             "ListTagsForResources",
-            "UpdateHealthCheck"
+            "UpdateHealthCheck",
+            "UpdateHostedZoneComment"
         ]
     },
     "AWS CloudFormation": {
         "ARNRegex": "^arn:aws:cloudformation:.+:[0-9]+:stack/.+/.+",
         "ARNFormat": "arn:aws:cloudformation:<region>:<account>:stack/<stackName>/<stackId>",
         "HasResource": true,
+        "conditionKeys": [
+            "cloudformation:TemplateUrl",
+            "cloudformation:StackPolicyUrl",
+            "cloudformation:ResourceTypes"
+        ],
         "StringPrefix": "cloudformation",
         "Actions": [
             "CancelUpdateStack",
             "CreateStack",
             "CreateUploadBucket",
             "DeleteStack",
+            "DescribeAccountLimits",
             "DescribeStackEvents",
             "DescribeStackResource",
             "DescribeStackResources",
@@ -231,8 +280,9 @@ Map AWS_PERMISSIONS = {
             "GetStackPolicy",
             "GetTemplate",
             "GetTemplateSummary",
-            "ListStacks",
             "ListStackResources",
+            "ListStacks",
+            "PreviewStackUpdate",
             "SetStackPolicy",
             "SignalResource",
             "UpdateStack",
@@ -263,6 +313,36 @@ Map AWS_PERMISSIONS = {
             "ModifyHsm"
         ]
     },
+    "AWS CodePipeline": {
+        "ARNRegex": "arn:aws:codepipeline:.+",
+        "ARNFormat": "arn:aws:codepipeline:<region>:<account_ID>:<path_to_pipeline_resource>",
+        "StringPrefix": "codepipeline",
+        "HasResource": true,
+        "Actions": [
+            "AcknowledgeJob",
+            "AcknowledgeThirdPartyJob",
+            "CreateCustomActionType",
+            "CreatePipeline",
+            "DeleteCustomActionType",
+            "DeletePipeline",
+            "DisableStageTransition",
+            "EnableStageTransition",
+            "GetPipeline",
+            "GetPipelineState",
+            "GetThirdPartyJobDetails",
+            "ListActionTypes",
+            "ListPipelines",
+            "PollForJobs",
+            "PollForThirdPartyJobs",
+            "PutActionRevision",
+            "PutJobFailureResult",
+            "PutJobSuccessResult",
+            "PutThirdPartyJobFailureResult",
+            "PutThirdPartyJobSuccessResult",
+            "StartPipelineExecution",
+            "UpdatePipeline"
+        ]
+    },
     "Amazon CloudSearch": {
         "StringPrefix": "cloudsearch",
         "ARNFormat": "arn:aws:cloudsearch:<region>:<account>:<resourceType>/<resourceName>",
@@ -287,8 +367,11 @@ Map AWS_PERMISSIONS = {
             "DescribeScalingParameters",
             "DescribeServiceAccessPolicies",
             "DescribeSuggesters",
+            "document",
             "IndexDocuments",
             "ListDomainNames",
+            "search",
+            "suggest",
             "UpdateAvailabilityOptions",
             "UpdateScalingParameters",
             "UpdateServiceAccessPolicies"
@@ -296,7 +379,7 @@ Map AWS_PERMISSIONS = {
     },
     "AWS CloudTrail": {
         "StringPrefix": "cloudtrail",
-        "ARNFormat": "arn:aws:cloudtrail:<region>:<account>:<resourceType>/<resourceName>",
+        "ARNFormat": "arn:aws:cloudtrail:<region>:<account>:<resource>",
         "ARNRegex": "^arn:aws:cloudtrail:::.+",
         "Actions": [
             "CreateTrail",
@@ -325,6 +408,39 @@ Map AWS_PERMISSIONS = {
             "PutDeliveryChannel",
             "StartConfigurationRecorder",
             "StopConfigurationRecorder"
+        ]
+    },
+    "AWS CodeCommit": {
+        "ARNFormat": "arn:aws:codecommit:<region>:<account_ID>:<repository_name>",
+        "ARNRegex": "^arn:aws:codecommit:.+",
+        "StringPrefix": "codecommit",
+        "Actions": [
+            "BatchGetRepositories",
+            "CreateBranch",
+            "CreateRepository",
+            "DeleteRepository",
+            "GetBlob",
+            "GetBranch",
+            "GetObjectIdentifier",
+            "GetRepository",
+            "GetTree",
+            "GitPull",
+            "GitPush",
+            "ListBranches",
+            "ListRepositories",
+            "UpdateDefaultBranch",
+            "UpdateRepositoryDescription",
+            "UpdateRepositoryName"
+        ]
+    },
+    "Amazon EC2 Spot Fleet": {
+        "StringPrefix": "ec2",
+        "Actions": [
+            "CancelSpotFleetRequests",
+            "DescribeSpotFleetInstances",
+            "DescribeSpotFleetRequests",
+            "DescribeSpotFleetRequestHistory",
+            "RequestSpotFleet"
         ]
     },
     "AWS CodeDeploy": {
@@ -364,6 +480,24 @@ Map AWS_PERMISSIONS = {
             "StopDeployment",
             "UpdateApplication",
             "UpdateDeploymentGroup"
+        ]
+    },
+    "Amazon Elastic File System": {
+        "ARNFormat": "arn:aws:elasticfilesystem:<region>:<account-id>:file-system/<file-system-id>",
+        "ARNRegex": "^arn:aws:elasticfilesystem:.+",
+        "StringPrefix": "elasticfilesystem",
+        "Actions": [
+            "CreateFileSystem",
+            "CreateTags",
+            "DescribeTags",
+            "DeleteTags",
+            "CreateMountTarget",
+            "ModifyMountTargetSecurityGroups",
+            "DescribeMountTargetSecurityGroups",
+            "DescribeFileSystems",
+            "DescribeMountTargets",
+            "DeleteMountTarget",
+            "DeleteFileSystem"
         ]
     },
     "Amazon Elastic Transcoder": {
@@ -442,6 +576,7 @@ Map AWS_PERMISSIONS = {
             "DeleteRole",
             "DeleteRolePolicy",
             "DeleteSAMLProvider",
+            "DeleteSSHPublicKey",
             "DeleteServerCertificate",
             "DeleteSigningCertificate",
             "DeleteUser",
@@ -455,6 +590,8 @@ Map AWS_PERMISSIONS = {
             "GetAccessKeyLastUsed",
             "GetAccountPasswordPolicy",
             "GetAccountSummary",
+            "GetContextKeysForCustomPolicy",
+            "GetContextKeysForPrincipalPolicy",
             "GetCredentialReport",
             "GetGroup",
             "GetGroupPolicy",
@@ -465,6 +602,7 @@ Map AWS_PERMISSIONS = {
             "GetRole",
             "GetRolePolicy",
             "GetSAMLProvider",
+            "GetSSHPublicKey",
             "GetServerCertificate",
             "GetUser",
             "GetUserPolicy",
@@ -485,6 +623,7 @@ Map AWS_PERMISSIONS = {
             "ListRolePolicies",
             "ListRoles",
             "ListSAMLProviders",
+            "ListSSHPublicKeys",
             "ListServerCertificates",
             "ListSigningCertificates",
             "ListUserPolicies",
@@ -498,17 +637,24 @@ Map AWS_PERMISSIONS = {
             "RemoveUserFromGroup",
             "ResyncMFADevice",
             "SetDefaultPolicyVersion",
+            "SimulateCustomPolicy",
+            "SimulatePrincipalPolicy",
             "UpdateAccessKey",
             "UpdateAccountPasswordPolicy",
             "UpdateAssumeRolePolicy",
             "UpdateGroup",
             "UpdateLoginProfile",
             "UpdateSAMLProvider",
+            "UpdateSSHPublicKey",
             "UpdateServerCertificate",
             "UpdateSigningCertificate",
             "UpdateUser",
+            "UploadSSHPublicKey",
             "UploadServerCertificate",
             "UploadSigningCertificate"
+        ],
+        "conditionKeys": [
+            "iam:PolicyArn"
         ]
     },
     "AWS Import Export": {
@@ -518,11 +664,12 @@ Map AWS_PERMISSIONS = {
             "UpdateJob",
             "CancelJob",
             "ListJobs",
-            "GetStatus"
+            "GetStatus",
+            "GetShippingLabel"
         ]
     },
     "Amazon Kinesis": {
-        "ARNFormat": "arn:aws:kinesis:us-east-1:<account>:<resourceType>/<resourceName>",
+        "ARNFormat": "arn:aws:kinesis:<region>:<account>:<resourceType>/<resourceName>",
         "ARNRegex": "^arn:aws:kinesis:.+",
         "HasResource": true,
         "StringPrefix": "kinesis",
@@ -579,6 +726,25 @@ Map AWS_PERMISSIONS = {
             "UpdateEventSourceMapping",
             "UpdateFunctionCode",
             "UpdateFunctionConfiguration"
+        ]
+    },
+    "Amazon Simple Systems Manager": {
+        "ARNFormat": "arn:aws:ssm:<region>:<account_ID>:<document_name>",
+        "ARNRegex": "^arn:aws:(ssm|ec2):.+",
+        "HasResource": true,
+        "StringPrefix": "ssm",
+        "Actions": [
+            "CreateAssociation",
+            "CreateAssociationBatch",
+            "CreateDocument",
+            "DeleteAssociation",
+            "DeleteDocument",
+            "DescribeAssociation",
+            "DescribeDocument",
+            "GetDocument",
+            "ListAssociations",
+            "ListDocuments",
+            "UpdateAssociationStatus"
         ]
     },
     "Amazon Simple Workflow Service": {
@@ -707,16 +873,20 @@ Map AWS_PERMISSIONS = {
         "Actions": [
             "AddPermission",
             "ChangeMessageVisibility",
+            "ChangeMessageVisibilityBatch",
             "CreateQueue",
             "DeleteMessage",
+            "DeleteMessageBatch",
             "DeleteQueue",
             "GetQueueAttributes",
             "GetQueueUrl",
+            "ListDeadLetterSourceQueues",
             "ListQueues",
             "PurgeQueue",
             "ReceiveMessage",
             "RemovePermission",
             "SendMessage",
+            "SendMessageBatch",
             "SetQueueAttributes"
         ]
     },
@@ -952,6 +1122,7 @@ Map AWS_PERMISSIONS = {
             "s3:x-amz-acl",
             "s3:x-amz-copy-source",
             "s3:x-amz-metadata-directive",
+            "s3:x-amz-server-side-encryption",
             "s3:VersionId",
             "s3:LocationConstraint",
             "s3:delimiter",
@@ -1029,6 +1200,7 @@ Map AWS_PERMISSIONS = {
             "CancelBundleTask",
             "CancelConversionTask",
             "CancelExportTask",
+            "CancelImportTask",
             "CancelReservedInstancesListing",
             "CancelSpotInstanceRequests",
             "ConfirmProductInstance",
@@ -1036,6 +1208,7 @@ Map AWS_PERMISSIONS = {
             "CopySnapshot",
             "CreateCustomerGateway",
             "CreateDhcpOptions",
+            "CreateFlowLogs",
             "CreateImage",
             "CreateInstanceExportTask",
             "CreateInternetGateway",
@@ -1062,6 +1235,7 @@ Map AWS_PERMISSIONS = {
             "DeactivateLicense",
             "DeleteCustomerGateway",
             "DeleteDhcpOptions",
+            "DeleteFlowLogs",
             "DeleteInternetGateway",
             "DeleteKeyPair",
             "DeleteNetworkAcl",
@@ -1092,8 +1266,11 @@ Map AWS_PERMISSIONS = {
             "DescribeCustomerGateways",
             "DescribeDhcpOptions",
             "DescribeExportTasks",
+            "DescribeFlowLogs",
             "DescribeImageAttribute",
             "DescribeImages",
+            "DescribeImportImageTasks",
+            "DescribeImportSnapshotTasks",
             "DescribeInstanceAttribute",
             "DescribeInstanceStatus",
             "DescribeInstances",
@@ -1124,10 +1301,10 @@ Map AWS_PERMISSIONS = {
             "DescribeVolumes",
             "DescribeVpcAttribute",
             "DescribeVpcClassicLink",
-            "DescribeVpcEndpoints",
             "DescribeVpcEndpointServices",
-            "DescribeVpcs",
+            "DescribeVpcEndpoints",
             "DescribeVpcPeeringConnections",
+            "DescribeVpcs",
             "DescribeVpnConnections",
             "DescribeVpnGateways",
             "DetachClassicLinkVpc",
@@ -1144,8 +1321,10 @@ Map AWS_PERMISSIONS = {
             "EnableVpcClassicLink",
             "GetConsoleOutput",
             "GetPasswordData",
+            "ImportImage",
             "ImportInstance",
             "ImportKeyPair",
+            "ImportSnapshot",
             "ImportVolume",
             "ModifyImageAttribute",
             "ModifyInstanceAttribute",
@@ -1182,19 +1361,27 @@ Map AWS_PERMISSIONS = {
             "UnmonitorInstances"
         ],
         "conditionKeys": [
+            "ec2:AccepterVpc",
             "ec2:AvailabilityZone",
             "ec2:EbsOptimized",
+            "ec2:ImageType",
             "ec2:InstanceProfile",
             "ec2:InstanceType",
+            "ec2:Owner",
             "ec2:ParentSnapshot",
             "ec2:PlacementGroup",
+            "ec2:PlacementGroupStrategy",
+            "ec2:Public",
             "ec2:Region",
+            "ec2:RequesterVpc",
             "ec2:ResourceTag",
             "ec2:RootDeviceType",
+            "ec2:Subnet",
             "ec2:Tenancy",
             "ec2:VolumeIops",
             "ec2:VolumeSize",
-            "ec2:VolumeType"
+            "ec2:VolumeType",
+            "ec2:Vpc"
         ]
     },
     "Amazon DynamoDB": {
@@ -1235,25 +1422,40 @@ Map AWS_PERMISSIONS = {
         "ARNRegex": "^arn:aws:glacier:.+:.+:.+",
         "StringPrefix": "glacier",
         "Actions": [
+            "AbortVaultLock",
+            "AddTagsToVault",
             "AbortMultipartUpload",
             "CompleteMultipartUpload",
+            "CompleteVaultLock",
             "CreateVault",
             "DeleteArchive",
             "DeleteVault",
+            "DeleteVaultAccessPolicy",
             "DeleteVaultNotifications",
             "DescribeJob",
             "DescribeVault",
+            "GetDataRetrievalPolicy",
             "GetJobOutput",
+            "GetVaultAccessPolicy",
+            "GetVaultLock",
             "GetVaultNotifications",
-            "InitiateMultipartUpload",
             "InitiateJob",
+            "InitiateMultipartUpload",
+            "InitiateVaultLock",
             "ListJobs",
             "ListMultipartUploads",
             "ListParts",
+            "ListTagsForVault",
             "ListVaults",
+            "RemoveTagsFromVault",
+            "SetDataRetrievalPolicy",
+            "SetVaultAccessPolicy",
             "SetVaultNotifications",
             "UploadArchive",
             "UploadMultipartPart"
+        ],
+        "conditionKeys": [
+            "glacier:ArchiveAgeInDays"
         ]
     },
     "Amazon CloudFront": {
@@ -1275,6 +1477,7 @@ Map AWS_PERMISSIONS = {
             "GetStreamingDistributionConfig",
             "ListCloudFrontOriginAccessIdentities",
             "ListDistributions",
+            "ListDistributionsByWebACLId",
             "ListInvalidations",
             "ListStreamingDistributions",
             "UpdateCloudFrontOriginAccessIdentity",
@@ -1289,8 +1492,11 @@ Map AWS_PERMISSIONS = {
         "StringPrefix": "sts",
         "Actions": [
             "AssumeRole",
+            "AssumeRoleWithSAML",
+            "AssumeRoleWithWebIdentity",
             "DecodeAuthorizationMessage",
-            "GetFederationToken"
+            "GetFederationToken",
+            "GetSessionToken"
         ]
     },
     "Amazon Zocalo": {
@@ -1316,6 +1522,7 @@ Map AWS_PERMISSIONS = {
         "HasResource": true,
         "StringPrefix": "ds",
         "Actions": [
+            "CreateComputer",
             "CreateDirectory",
             "CreateSnapshot",
             "CheckAlias",
@@ -1341,6 +1548,7 @@ Map AWS_PERMISSIONS = {
             "CreateCacheParameterGroup",
             "CreateCacheSecurityGroup",
             "CreateCacheSubnetGroup",
+            "CreateReplicationGroup",
             "CreateSnapshot",
             "DeleteCacheCluster",
             "DeleteCacheParameterGroup",
@@ -1360,6 +1568,7 @@ Map AWS_PERMISSIONS = {
             "DescribeReservedCacheNodes",
             "DescribeReservedCacheNodesOfferings",
             "DescribeSnapshots",
+            "ListTagsForResource",
             "ModifyCacheCluster",
             "ModifyCacheParameterGroup",
             "ModifyCacheSubnetGroup",
@@ -1384,6 +1593,7 @@ Map AWS_PERMISSIONS = {
             "DescribeLogGroups",
             "DescribeLogStreams",
             "DescribeMetricFilters",
+            "FilterLogEvents",
             "GetLogEvents",
             "PutLogEvents",
             "PutMetricFilter",
@@ -1398,6 +1608,7 @@ Map AWS_PERMISSIONS = {
         "Actions": [
             "CreateIdentityPool",
             "DeleteIdentityPool",
+            "DeleteIdentities",
             "DescribeIdentity",
             "DescribeIdentityPool",
             "GetIdentityPoolRoles",
@@ -1486,12 +1697,26 @@ Map AWS_PERMISSIONS = {
             "GenerateDataKeyWithoutPlaintext",
             "GetKeyPolicy",
             "GetKeyRotationStatus",
-            "List*",
+            "ListAliases",
+            "ListGrants",
+            "ListKeyPolicies",
+            "ListKeys",
             "PutKeyPolicy",
             "ReEncrypt*",
             "RetireGrant",
             "RevokeGrant",
+            "UpdateAlias",
             "UpdateKeyDescription"
+        ],
+        "conditionKeys": [
+            "kms:EncryptionContextKeys",
+            "kms:EncryptionContext",
+            "kms:CallerAccount",
+            "kms:GrantOperations",
+            "kms:GrantConstraintType",
+            "kms:GrantId",
+            "kms:GrantIsForAWSResource",
+            "kms:ViaService"
         ]
     },
     "AWS Billing": {
@@ -1566,7 +1791,7 @@ Map AWS_PERMISSIONS = {
     "AWS OpsWorks": {
         "StringPrefix": "opsworks",
         "ARNRegex": "^arn:aws:opsworks:.+",
-        "ARNFormat": "arn:aws:opsworks:<region>:<account>:<resourceType>/<resourcePath>",
+        "ARNFormat": "arn:aws:opsworks:<region>:<accountId>:<stack>/<stackId>/",
         "Actions": [
             "AssignVolume",
             "AssociateElasticIp",
@@ -1670,16 +1895,20 @@ Map AWS_PERMISSIONS = {
         "HasResource": true,
         "Actions": [
             "CreateCluster",
+            "CreateService",
             "DeleteCluster",
+            "DeleteService",
             "DeregisterContainerInstance",
             "DeregisterTaskDefinition",
             "DescribeClusters",
             "DescribeContainerInstances",
+            "DescribeServices",
             "DescribeTaskDefinition",
             "DescribeTasks",
             "DiscoverPollEndpoint",
             "ListClusters",
             "ListContainerInstances",
+            "ListServices",
             "ListTaskDefinitions",
             "ListTasks",
             "Poll",
@@ -1688,8 +1917,10 @@ Map AWS_PERMISSIONS = {
             "RunTask",
             "StartTask",
             "StopTask",
+            "StartTelemetrySession",
             "SubmitContainerStateChange",
-            "SubmitTaskStateChange"
+            "SubmitTaskStateChange",
+            "UpdateService"
         ],
         "conditionKeys": [
             "ecs:cluster",
@@ -1729,10 +1960,162 @@ Map AWS_PERMISSIONS = {
             "UpdateMLModel"
         ]
     },
+    "Amazon WorkSpaces": {
+        "StringPrefix": "workspaces",
+        "Actions": [
+            "CreateWorkspaces",
+            "DescribeWorkspaceBundles",
+            "DescribeWorkspaceDirectories",
+            "DescribeWorkspaces",
+            "RebootWorkspaces",
+            "RebuildWorkspaces",
+            "TerminateWorkspaces"
+        ]
+    },
     "Amazon WorkSpaces Application Manager": {
         "StringPrefix": "wam",
         "Actions": [
             "AuthenticatePackager"
+        ]
+    },
+    "Data Pipeline": {
+        "StringPrefix": "datapipeline",
+        "Actions": [
+            "ActivatePipeline",
+            "AddTags",
+            "CreatePipeline",
+            "DeactivatePipeline",
+            "DeletePipeline",
+            "DescribeObjects",
+            "DescribePipelines",
+            "EvaluateExpression",
+            "GetAccountLimits",
+            "GetPipelineDefinition",
+            "ListPipelines",
+            "PollForTask",
+            "PutAccountLimits",
+            "PutPipelineDefinition",
+            "QueryObjects",
+            "RemoteTags",
+            "ReportTaskProgress",
+            "ReportTaskRunnerHeartbeat",
+            "SetStatus",
+            "SetTaskStatus",
+            "ValidatePipelineDefinition"
+        ]
+    },
+    "Amazon Elasticsearch Service": {
+        "StringPrefix": "es",
+        "ARNRegex": "^arn:aws:es:.+",
+        "ARNFormat": "arn:aws:es:<region>:<account_ID>:<resource>",
+        "HasResource": true,
+        "Actions": [
+            "AddTags",
+            "CreateElasticsearchDomain",
+            "DeleteElasticsearchDomain",
+            "DescribeElasticsearchDomain",
+            "DescribeElasticsearchDomains",
+            "DescribeElasticsearchDomainConfig",
+            "ListDomainNames",
+            "ListTags",
+            "RemoveTags",
+            "UpdateElasticsearchDomainConfig"
+        ]
+    },
+    "AWS WAF": {
+        "StringPrefix": "waf",
+        "ARNRegex": "^arn:aws:waf::[0-9]+:.+/.+",
+        "ARNFormat": "arn:aws:waf::<account_ID>:<resource>/<resource_id>",
+        "HasResource": true,
+        "Actions": [
+            "CreateByteMatchSet",
+            "CreateIPSet",
+            "CreateRule",
+            "CreateSqlInjectionMatchSet",
+            "CreateWebACL",
+            "DeleteByteMatchSet",
+            "DeleteIPSet",
+            "DeleteRule",
+            "DeleteSqlInjectionMatchSet",
+            "DeleteWebACL",
+            "GetByteMatchSet",
+            "GetChangeToken",
+            "GetChangeTokenStatus",
+            "GetIPSet",
+            "GetRule",
+            "GetSampledRequests",
+            "GetSqlInjectionMatchSet",
+            "GetWebACL",
+            "ListByteMatchSets",
+            "ListIPSets",
+            "ListRules",
+            "ListSqlInjectionMatchSets",
+            "ListWebACLs",
+            "UpdateByteMatchSet",
+            "UpdateIPSet",
+            "UpdateRule",
+            "UpdateSqlInjectionMatchSet",
+            "UpdateWebACL"
+        ]
+    },
+    "Amazon Inspector": {
+        "StringPrefix": "inspector",
+        "ARNRegex": "^arn:aws:inspector:.+",
+        "ARNFormat": "arn:aws:inspector:<region>:<account_ID>:<resource_id>",
+        "HasResource": true,
+        "Actions": [
+            "AddAttributesToFindings",
+            "AttachAssessmentAndRulesPackage",
+            "CreateApplication",
+            "CreateAssessment",
+            "CreateResourceGroup",
+            "DeleteApplication",
+            "DeleteAssessment",
+            "DeleteRun",
+            "DescribeApplication",
+            "DescribeAssessment",
+            "DescribeCrossAccountAccessRole",
+            "DescribeFinding",
+            "DescribeResourceGroup",
+            "DescribeRulesPackage",
+            "DescribeRun",
+            "DetachAssessmentAndRulesPackage",
+            "GetAssessmentTelemetry",
+            "ListApplications",
+            "ListAssessmentAgents",
+            "ListAssessments",
+            "ListAttachedAssessments",
+            "ListAttachedRulesPackages",
+            "ListFindings",
+            "ListRulesPackages",
+            "ListRuns",
+            "ListTagsForResource",
+            "LocalizeText",
+            "PreviewAgentsForResourceGroup",
+            "RegisterCrossAccountAccessRole",
+            "RemoveAttributesFromFindings",
+            "RetireRulesPackage",
+            "RunAssessment",
+            "SetTagsForResource",
+            "StartDataCollection",
+            "StopDataCollection",
+            "UpdateApplication",
+            "UpdateAssessment"
+        ]
+    },
+    "Amazon Kinesis Firehose": {
+        "StringPrefix": "firehose",
+        "ARNRegex": "^arn:aws:firehose:.+:[0-9]+:deliverystream/.+",
+        "ARNFormat": "arn:aws:firehose:<region>:<account_ID>:deliverystream/<deliverystreamname>",
+        "HasResource": true,
+        "Actions": [
+            "CreateDeliveryStream",
+            "DeleteDeliveryStream",
+            "DescribeDeliveryStream",
+            "ListDeliveryStreams",
+            "PutRecord",
+            "PutRecordBatch",
+            "UpdateDestination"
         ]
     }
 };
