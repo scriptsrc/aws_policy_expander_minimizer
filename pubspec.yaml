@@ -5,4 +5,4 @@ version: 0.0.4
 author: Patrick Kelley <pkelley@netflix.com>
 homepage: https://github.com/monkeysecurity/aws_policy_expander_minimizer
 dev_dependencies:
-  unittest: 0.12.0
+  unittest: 0.11.5+4
