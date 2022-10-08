@@ -1,8 +1,9 @@
 name: aws_policy_expander_minimizer
 description: >
   A library for expanding and minimizing AWS policies.
-version: 0.0.4
-author: Patrick Kelley <pkelley@netflix.com>
+version: 0.0.5
+environment: 
+  sdk: '>=2.10.0 <3.0.0'
 homepage: https://github.com/monkeysecurity/aws_policy_expander_minimizer
 dev_dependencies:
-  unittest: 0.11.5+4
+  test: ^1.21.6

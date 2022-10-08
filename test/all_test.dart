@@ -3,11 +3,11 @@
 
 library aws_policy_expander_minimizer.test;
 
-import 'package:unittest/unittest.dart';
-import 'package:aws_policy_expander_minimizer/aws_policy_expander_minimizer.dart';
+import 'package:test/test.dart';
+
+import '../lib/aws_policy_expander_minimizer.dart';
 
 main() {
-
   ///
   /// Minimizer Private
   ///
@@ -26,53 +26,57 @@ main() {
 
     test('getDesiredActionsFromStatement', () {
       var statement = {
-          "Action": [
-              "swf:respond*"
-          ],
-          "Resource": "*",
-          "Effect": "Allow"
+        "Action": ["swf:respond*"],
+        "Resource": "*",
+        "Effect": "Allow"
       };
       var desired_actions = pmi.getDesiredActionsFromStatement(statement);
-      expect(desired_actions,
-       new Set.from([
-         "swf:respondactivitytaskcanceled",
-         "swf:respondactivitytaskcompleted",
-         "swf:respondactivitytaskfailed",
-         "swf:responddecisiontaskcompleted"
-       ])
-      );
+      expect(
+          desired_actions,
+          new Set.from([
+            "swf:respondactivitytaskcanceled",
+            "swf:respondactivitytaskcompleted",
+            "swf:respondactivitytaskfailed",
+            "swf:responddecisiontaskcompleted"
+          ]));
     });
 
     test('getDesiredActionsFromStatement no wildcard', () {
       var statement = {
-          "Action": [
-              "swf:respondactivitytaskcanceled"
-          ],
-          "Resource": "*",
-          "Effect": "Allow"
+        "Action": ["swf:respondactivitytaskcanceled"],
+        "Resource": "*",
+        "Effect": "Allow"
       };
       var desired_actions = pmi.getDesiredActionsFromStatement(statement);
-      expect(desired_actions,
-       new Set.from([
-         "swf:respondactivitytaskcanceled",
-       ])
-      );
+      expect(
+          desired_actions,
+          new Set.from([
+            "swf:respondactivitytaskcanceled",
+          ]));
     });
 
     test('getDeniedPrefixesFromDesired', () {
-      Set<String> desired_actions = new Set.from([
+      Set<dynamic> desired_actions = new Set<dynamic>.from([
         "aws-marketplace-management:uploadfiles",
         "aws-marketplace-management:viewmarketing",
         //"aws-marketplace-management:viewreports",
         "aws-marketplace-management:viewsupport"
       ]);
-      Set<String> denied_actions = pmi.getDeniedPrefixesFromDesired(desired_actions);
-      expect(denied_actions.contains("aws-marketplace-management:viewreports"), true);
-      expect(denied_actions.contains("aws-marketplace-management:viewreport"), true);
-      expect(denied_actions.contains("aws-marketplace-management:viewrepor"), true);
-      expect(denied_actions.contains("aws-marketplace-management:viewrepo"), true);
-      expect(denied_actions.contains("aws-marketplace-management:viewrep"), true);
-      expect(denied_actions.contains("aws-marketplace-management:viewre"), true);
+
+      Set<dynamic> denied_actions =
+          pmi.getDeniedPrefixesFromDesired(desired_actions);
+      expect(denied_actions.contains("aws-marketplace-management:viewreports"),
+          true);
+      expect(denied_actions.contains("aws-marketplace-management:viewreport"),
+          true);
+      expect(denied_actions.contains("aws-marketplace-management:viewrepor"),
+          true);
+      expect(
+          denied_actions.contains("aws-marketplace-management:viewrepo"), true);
+      expect(
+          denied_actions.contains("aws-marketplace-management:viewrep"), true);
+      expect(
+          denied_actions.contains("aws-marketplace-management:viewre"), true);
       expect(denied_actions.contains("aws-marketplace-management:viewr"), true);
       expect(denied_actions.contains("aws-marketplace-management:view"), true);
       expect(denied_actions.contains("aws-marketplace-management:vie"), true);
@@ -80,10 +84,11 @@ main() {
       expect(denied_actions.contains("aws-marketplace-management:v"), true);
       expect(denied_actions.contains("aws-marketplace-management:"), true);
 
-      expect(denied_actions.contains("aws-marketplace-management:viewsupport"), false);
-      expect(denied_actions.contains("trustedadvisor:describechecksummaries"), true);
+      expect(denied_actions.contains("aws-marketplace-management:viewsupport"),
+          false);
+      expect(denied_actions.contains("trustedadvisor:describechecksummaries"),
+          true);
       expect(denied_actions.contains("trustedadvisor:describe"), true);
-
     });
 
     test('check_min_permission_length_false', () {
@@ -96,53 +101,53 @@ main() {
 
     test('minimizeStatementActions', () {
       var statement = {
-          "Action": [
-              "swf:respondactivitytaskcanceled",
-              "swf:respondactivitytaskcompleted",
-              "swf:respondactivitytaskfailed",
-              "swf:responddecisiontaskcompleted"
-          ],
-          "Resource": "*",
-          "Effect": "Allow"
+        "Action": [
+          "swf:respondactivitytaskcanceled",
+          "swf:respondactivitytaskcompleted",
+          "swf:respondactivitytaskfailed",
+          "swf:responddecisiontaskcompleted"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
       };
 
-      List<String> minimized_actions = pmi.minimizeStatementActions(statement, 0);
+      List<dynamic> minimized_actions =
+          pmi.minimizeStatementActions(statement, 0);
       expect(minimized_actions, ["swf:res*"]);
-
     });
 
     test('minimizeStatementActions minChars', () {
       var statement = {
-          "Action": [
-              "swf:respondactivitytaskcanceled",
-              "swf:respondactivitytaskcompleted",
-              "swf:respondactivitytaskfailed",
-              "swf:responddecisiontaskcompleted"
-          ],
-          "Resource": "*",
-          "Effect": "Allow"
+        "Action": [
+          "swf:respondactivitytaskcanceled",
+          "swf:respondactivitytaskcompleted",
+          "swf:respondactivitytaskfailed",
+          "swf:responddecisiontaskcompleted"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
       };
 
-      List<String> minimized_actions = pmi.minimizeStatementActions(statement, 7);
+      List<dynamic> minimized_actions =
+          pmi.minimizeStatementActions(statement, 7);
       expect(minimized_actions, ["swf:respond*"]);
-
     });
-
   });
 
   ///
   /// Minimizer Public
   ///
   group('Minimizer Public Method Tests', () {
-      Minimizer minimizer;
+    Minimizer minimizer;
 
-      setUp(() {
-        minimizer = new Minimizer();
-      });
+    setUp(() {
+      minimizer = new Minimizer();
+    });
 
-      test('minimize policy with single policy', () {
-        var policy = {
-          "Statement": [{
+    test('minimize policy with single policy', () {
+      var policy = {
+        "Statement": [
+          {
             "Action": [
               "swf:respondactivitytaskcanceled",
               "swf:respondactivitytaskcompleted",
@@ -151,181 +156,166 @@ main() {
             ],
             "Resource": "*",
             "Effect": "Allow"
-          }]
-        };
-        var minimized = minimizer.minimizePolicy(policy, 0);
-        expect(minimized,
-          {
-            "Statement": [{
-              "Action": [
-                "swf:res*"
-              ],
-              "Resource": "*",
-              "Effect": "Allow"
-            }]
           }
-        );
-      });
-
-      test('minimize policy without modifying passed in datastructure', () {
-        var policy = {
-          "Statement": [{
-            "Action": [
-              "swf:respondactivitytaskcanceled",
-              "swf:respondactivitytaskcompleted",
-              "swf:respondactivitytaskfailed",
-              "swf:responddecisiontaskcompleted"
-            ],
+        ]
+      };
+      var minimized = minimizer.minimizePolicy(policy, 0);
+      expect(minimized, {
+        "Statement": [
+          {
+            "Action": ["swf:res*"],
             "Resource": "*",
             "Effect": "Allow"
-          }]
-        };
-        var minimized = minimizer.minimizePolicy(policy, 0);
-        expect(policy,
-          {
-            "Statement": [{
-              "Action": [
-                "swf:respondactivitytaskcanceled",
-                "swf:respondactivitytaskcompleted",
-                "swf:respondactivitytaskfailed",
-                "swf:responddecisiontaskcompleted"
-              ],
-              "Resource": "*",
-              "Effect": "Allow"
-            }]
           }
-        );
-      });
-
-      test('minimize policy with multiple policies', () {
-        var policies = {
-          "rolepolicies": {
-            "PolName1": {
-              "Statement": [
-                {
-                  "Action": [
-                    "swf:respondactivitytaskcanceled",
-                    "swf:respondactivitytaskcompleted",
-                    "swf:respondactivitytaskfailed",
-                    "swf:responddecisiontaskcompleted"
-                  ],
-                  "Resource": "*",
-                  "Effect": "Allow"
-                }
-              ]
-            },
-            "PolName2": {
-              "Statement": [
-                {
-                  "Action": [
-                    "kinesis:getsharditerator",
-                    "kinesis:getrecords"
-                  ],
-                  "Resource": "*",
-                  "Effect": "Allow"
-                }
-              ]
-            }
-          }
-        };
-        var minimized = minimizer.minimizePolicies(policies, 3);
-        expect(minimized,
-          {
-            "rolepolicies": {
-              "PolName1": {
-                "Statement": [
-                  {
-                    "Action": [
-                      "swf:res*"
-                    ],
-                    "Resource": "*",
-                    "Effect": "Allow"
-                  }
-                ]
-              },
-              "PolName2": {
-                "Statement": [
-                  {
-                    "Action": [
-                      "kinesis:get*"
-                    ],
-                    "Resource": "*",
-                    "Effect": "Allow"
-                  }
-                 ]
-              }
-            }
-          }
-        );
-      });
-
-      test('minimize policy with multiple policies without modifying passed in datastructure', () {
-        var policies = {
-          "rolepolicies": {
-            "PolName1": {
-              "Statement": [
-                {
-                  "Action": [
-                    "swf:respondactivitytaskcanceled",
-                    "swf:respondactivitytaskcompleted",
-                    "swf:respondactivitytaskfailed",
-                    "swf:responddecisiontaskcompleted"
-                  ],
-                  "Resource": "*",
-                  "Effect": "Allow"
-                }
-              ]
-            },
-            "PolName2": {
-              "Statement": [
-                {
-                  "Action": [
-                    "kinesis:getsharditerator",
-                    "kinesis:getrecords"
-                  ],
-                  "Resource": "*",
-                  "Effect": "Allow"
-                }
-              ]
-            }
-          }
-        };
-        var minimized = minimizer.minimizePolicies(policies, 3);
-        expect(policies,
-          {
-            "rolepolicies": {
-              "PolName1": {
-                "Statement": [
-                  {
-                    "Action": [
-                      "swf:respondactivitytaskcanceled",
-                      "swf:respondactivitytaskcompleted",
-                      "swf:respondactivitytaskfailed",
-                      "swf:responddecisiontaskcompleted"
-                    ],
-                    "Resource": "*",
-                    "Effect": "Allow"
-                  }
-                ]
-              },
-              "PolName2": {
-                "Statement": [
-                  {
-                    "Action": [
-                      "kinesis:getsharditerator",
-                      "kinesis:getrecords"
-                    ],
-                    "Resource": "*",
-                    "Effect": "Allow"
-                  }
-                ]
-              }
-            }
-          }
-        );
+        ]
       });
     });
 
+    test('minimize policy without modifying passed in datastructure', () {
+      var policy = {
+        "Statement": [
+          {
+            "Action": [
+              "swf:respondactivitytaskcanceled",
+              "swf:respondactivitytaskcompleted",
+              "swf:respondactivitytaskfailed",
+              "swf:responddecisiontaskcompleted"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+          }
+        ]
+      };
+      var minimized = minimizer.minimizePolicy(policy, 0);
+      expect(policy, {
+        "Statement": [
+          {
+            "Action": [
+              "swf:respondactivitytaskcanceled",
+              "swf:respondactivitytaskcompleted",
+              "swf:respondactivitytaskfailed",
+              "swf:responddecisiontaskcompleted"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+          }
+        ]
+      });
+    });
+
+    test('minimize policy with multiple policies', () {
+      var policies = {
+        "rolepolicies": {
+          "PolName1": {
+            "Statement": [
+              {
+                "Action": [
+                  "swf:respondactivitytaskcanceled",
+                  "swf:respondactivitytaskcompleted",
+                  "swf:respondactivitytaskfailed",
+                  "swf:responddecisiontaskcompleted"
+                ],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          },
+          "PolName2": {
+            "Statement": [
+              {
+                "Action": ["kinesis:getsharditerator", "kinesis:getrecords"],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          }
+        }
+      };
+      var minimized = minimizer.minimizePolicies(policies, 3);
+      expect(minimized, {
+        "rolepolicies": {
+          "PolName1": {
+            "Statement": [
+              {
+                "Action": ["swf:res*"],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          },
+          "PolName2": {
+            "Statement": [
+              {
+                "Action": ["kinesis:get*"],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          }
+        }
+      });
+    });
+
+    test(
+        'minimize policy with multiple policies without modifying passed in datastructure',
+        () {
+      var policies = {
+        "rolepolicies": {
+          "PolName1": {
+            "Statement": [
+              {
+                "Action": [
+                  "swf:respondactivitytaskcanceled",
+                  "swf:respondactivitytaskcompleted",
+                  "swf:respondactivitytaskfailed",
+                  "swf:responddecisiontaskcompleted"
+                ],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          },
+          "PolName2": {
+            "Statement": [
+              {
+                "Action": ["kinesis:getsharditerator", "kinesis:getrecords"],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          }
+        }
+      };
+      var minimized = minimizer.minimizePolicies(policies, 3);
+      expect(policies, {
+        "rolepolicies": {
+          "PolName1": {
+            "Statement": [
+              {
+                "Action": [
+                  "swf:respondactivitytaskcanceled",
+                  "swf:respondactivitytaskcompleted",
+                  "swf:respondactivitytaskfailed",
+                  "swf:responddecisiontaskcompleted"
+                ],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          },
+          "PolName2": {
+            "Statement": [
+              {
+                "Action": ["kinesis:getsharditerator", "kinesis:getrecords"],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          }
+        }
+      });
+    });
+  });
 
   ///
   /// Expander Private
@@ -443,52 +433,55 @@ main() {
                 "SNS:AddPermission",
                 "SNS:Subscribe"
               ],
-              "Principal": {
-                "AWS": "*"
-              }
+              "Principal": {"AWS": "*"}
             }
           ]
-        }
+        },
       };
+
       var expanded = expander.expandPolicies(policy);
+
       expect(expanded, {
         "policy": {
           "Version": "2008-10-17",
           "Id": "__default_policy_ID",
-          "Statement": [{
-            "Resource": "arn:aws:sns:eu-west-1:XXXX:blah",
-            "Effect": "Allow",
-            "Sid": "statementID",
-            "Action": [
-              'sns:addpermission',
-              'sns:deletetopic',
-              'sns:gettopicattributes',
-              'sns:listsubscriptionsbytopic',
-              'sns:publish',
-              'sns:receive',
-              'sns:removepermission',
-              'sns:settopicattributes',
-              'sns:subscribe'
-            ],
-            "Principal": {
-              "AWS": "*"
+          "Statement": [
+            {
+              "Resource": "arn:aws:sns:eu-west-1:XXXX:blah",
+              "Effect": "Allow",
+              "Sid": "statementID",
+              "Action": [
+                'sns:addpermission',
+                'sns:deletetopic',
+                'sns:gettopicattributes',
+                'sns:listsubscriptionsbytopic',
+                'sns:publish',
+                'sns:receive',
+                'sns:removepermission',
+                'sns:settopicattributes',
+                'sns:subscribe'
+              ],
+              "Principal": {"AWS": "*"}
             }
-          }]
+          ]
         }
       });
     });
 
     test('expand policy with single policy', () {
       var policy = {
-        "Statement": [{
+        "Statement": [
+          {
             "Action": ["swf:res*"],
             "Resource": "*",
             "Effect": "Allow"
-          }]
+          }
+        ]
       };
       var expanded = expander.expandPolicy(policy);
       expect(expanded, {
-        "Statement": [{
+        "Statement": [
+          {
             "Action": [
               "swf:respondactivitytaskcanceled",
               "swf:respondactivitytaskcompleted",
@@ -497,135 +490,152 @@ main() {
             ],
             "Resource": "*",
             "Effect": "Allow"
-          }]
+          }
+        ]
       });
     });
 
-    test('expand policy with single policy without modifying input datastructure', () {
+    test(
+        'expand policy with single policy without modifying input datastructure',
+        () {
       var policy = {
-        "Statement": [{
+        "Statement": [
+          {
             "Action": ["swf:res*"],
             "Resource": "*",
             "Effect": "Allow"
-          }]
+          }
+        ]
       };
       var expanded = expander.expandPolicy(policy);
       expect(policy, {
-        "Statement": [{
-          "Action": ["swf:res*"],
-          "Resource": "*",
-          "Effect": "Allow"
-        }]
+        "Statement": [
+          {
+            "Action": ["swf:res*"],
+            "Resource": "*",
+            "Effect": "Allow"
+          }
+        ]
       });
     });
 
     test('expand policy with multiple policies', () {
-
       var policies = {
         "rolepolicies": {
           "PolName1": {
-            "Statement": [{
+            "Statement": [
+              {
                 "Action": ["swf:res*"],
                 "Resource": "*",
                 "Effect": "Allow"
-              }]
+              }
+            ]
           },
           "PolName2": {
-            "Statement": [{
+            "Statement": [
+              {
                 "Action": ["kinesis:get*"],
                 "Resource": "*",
                 "Effect": "Allow"
-              }]
+              }
+            ]
           }
         }
       };
       var expanded = expander.expandPolicies(policies);
-      expect(expanded,
-        {
-          "rolepolicies": {
-            "PolName1": {
-              "Statement": [{
-                  "Action": [
-                    "swf:respondactivitytaskcanceled",
-                    "swf:respondactivitytaskcompleted",
-                    "swf:respondactivitytaskfailed",
-                    "swf:responddecisiontaskcompleted"
-                  ],
-                  "Resource": "*",
-                  "Effect": "Allow"
-                }]
-            },
-            "PolName2": {
-              "Statement": [
-                {
-                  "Action": [
-                    "kinesis:getrecords",
-                    "kinesis:getsharditerator"
-                  ],
-                  "Resource": "*",
-                  "Effect": "Allow"
-                }
-              ]
-            }
+      expect(expanded, {
+        "rolepolicies": {
+          "PolName1": {
+            "Statement": [
+              {
+                "Action": [
+                  "swf:respondactivitytaskcanceled",
+                  "swf:respondactivitytaskcompleted",
+                  "swf:respondactivitytaskfailed",
+                  "swf:responddecisiontaskcompleted"
+                ],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
+          },
+          "PolName2": {
+            "Statement": [
+              {
+                "Action": ["kinesis:getrecords", "kinesis:getsharditerator"],
+                "Resource": "*",
+                "Effect": "Allow"
+              }
+            ]
           }
         }
-      );
+      });
     });
 
-    test('expand policy with multiple policies without modifying input datastructure', () {
-
+    test(
+        'expand policy with multiple policies without modifying input datastructure',
+        () {
       var policies = {
         "rolepolicies": {
           "PolName1": {
-            "Statement": [{
+            "Statement": [
+              {
                 "Action": ["swf:res*"],
                 "Resource": "*",
                 "Effect": "Allow"
-              }]
+              }
+            ]
           },
           "PolName2": {
-            "Statement": [{
+            "Statement": [
+              {
                 "Action": ["kinesis:get*"],
                 "Resource": "*",
                 "Effect": "Allow"
-              }]
+              }
+            ]
           }
         }
       };
       var expanded = expander.expandPolicies(policies);
-      expect(policies,
-        {
-          "rolepolicies": {
-            "PolName1": {
-              "Statement": [{
+      expect(policies, {
+        "rolepolicies": {
+          "PolName1": {
+            "Statement": [
+              {
                 "Action": ["swf:res*"],
                 "Resource": "*",
                 "Effect": "Allow"
-              }]
-            },
-            "PolName2": {
-              "Statement": [{
+              }
+            ]
+          },
+          "PolName2": {
+            "Statement": [
+              {
                 "Action": ["kinesis:get*"],
                 "Resource": "*",
                 "Effect": "Allow"
-              }]
-            }
+              }
+            ]
           }
         }
-      );
+      });
     });
 
     test('expand policy wildcard with uppercase', () {
       var policy = {
-        "Statement": [{
+        "Statement": [
+          {
             "Action": ["ec2:Describe*"],
             "Resource": "*",
             "Effect": "Allow"
-          }]
+          }
+        ]
       };
       var expanded = expander.expandPolicy(policy);
       expect(expanded, {
-        "Statement": [{
+        "Statement": [
+          {
             "Action": [
               "ec2:describeaccountattributes",
               "ec2:describeaddresses",
@@ -683,9 +693,9 @@ main() {
             ],
             "Resource": "*",
             "Effect": "Allow"
-          }]
+          }
+        ]
       });
     });
-
   });
 }
