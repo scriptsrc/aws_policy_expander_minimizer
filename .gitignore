@@ -6,3 +6,6 @@ node_modules
 build/
 packages
 pubspec.lock
+main.dart
+.vscode/
+.dart_tool/

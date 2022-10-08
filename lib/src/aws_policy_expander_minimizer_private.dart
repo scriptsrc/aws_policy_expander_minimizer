@@ -6,7 +6,7 @@ library aws_policy_expander_minimizer.private;
 import "master_permissions.dart" show AWS_PERMISSIONS;
 
 class PrivateExpander {
-  Set<String> master_permissions = new Set<String>();
+  Set<dynamic> master_permissions = new Set<dynamic>();
 
   setupMasterPermissions() {
     for (var technology_name in AWS_PERMISSIONS.keys) {
@@ -17,11 +17,11 @@ class PrivateExpander {
     }
   }
 
-  List<String> expandWildcardAction(var action) {
+  List<dynamic> expandWildcardAction(var action) {
     if (action is String) {
       if (action.contains('*')) {
         String pre_wildcard = action.split('*')[0];
-        List<String> expanded = new List<String>();
+        List<dynamic> expanded = [];
         master_permissions.forEach((master_action) {
           if (master_action.startsWith(pre_wildcard.toLowerCase())) {
             expanded.add(master_action.toLowerCase());
@@ -31,32 +31,33 @@ class PrivateExpander {
       }
       return [action.toLowerCase()];
     } else if (action is List) {
-      List<String> expanded = new List<String>();
+      List<dynamic> expanded = [];
       for (var item in action) {
-          expanded.addAll(expandWildcardAction(item));
+        expanded.addAll(expandWildcardAction(item));
       }
       return expanded;
     } else {
-        throw new InvalidInputException('expandWildcardAction requires a string or list of strings');
+      throw new InvalidInputException(
+          'expandWildcardAction requires a string or list of strings');
     }
-    // unreachable code so Dart Editor stops complaining.
-    return [];
   }
 
-  List<String> expandWildcardNotAction(var not_action) {
-    Set<String> action_set = new Set<String>.from(master_permissions);
+  List<dynamic> expandWildcardNotAction(var not_action) {
+    Set<dynamic> action_set = new Set<dynamic>.from(master_permissions);
     if (not_action is String) {
-      return action_set.difference(new Set<String>.from(expandWildcardAction(not_action))).toList();
+      return action_set
+          .difference(new Set<dynamic>.from(expandWildcardAction(not_action)))
+          .toList();
     } else if (not_action is List) {
       for (var item in not_action) {
-        action_set = action_set.difference(new Set<String>.from(expandWildcardAction(item)));
+        action_set = action_set
+            .difference(new Set<dynamic>.from(expandWildcardAction(item)));
       }
       return action_set.toList();
     } else {
-        throw new InvalidInputException('expandWildcardNotAction requires a string or list of strings');
+      throw new InvalidInputException(
+          'expandWildcardNotAction requires a string or list of strings');
     }
-    // unreachable code so Dart Editor stops complaining.
-    return [];
   }
 }
 
@@ -64,9 +65,8 @@ class PrivateExpander {
 /// all statements must be expanded before they
 /// are minimized.
 class PrivateMinimizer extends PrivateExpander {
-
-  List<String> getPrefixesForAction(var action) {
-    List<String> retval = new List<String>();
+  List<dynamic> getPrefixesForAction(String action) {
+    List<dynamic> retval = [];
 
     String technology, permission;
     List<String> parts = action.split(':');
@@ -85,7 +85,7 @@ class PrivateMinimizer extends PrivateExpander {
     return retval;
   }
 
-  getDesiredActionsFromStatement(Map statement) {
+  getDesiredActionsFromStatement(Map<String, Object> statement) {
     Set desired_actions = new Set();
     var actions = expandWildcardAction(statement['Action']);
 
@@ -99,9 +99,10 @@ class PrivateMinimizer extends PrivateExpander {
     return desired_actions;
   }
 
-  getDeniedPrefixesFromDesired(Set desired_actions) {
-    Set denied_actions = master_permissions.difference(desired_actions);
-    Set denied_prefixes = new Set();
+  Set<dynamic> getDeniedPrefixesFromDesired(Set<dynamic> desired_actions) {
+    Set<dynamic> denied_actions =
+        master_permissions.difference(desired_actions);
+    Set<dynamic> denied_prefixes = new Set<dynamic>();
     for (var denied_action in denied_actions) {
       for (var denied_prefix in getPrefixesForAction(denied_action)) {
         denied_prefixes.add(denied_prefix);
@@ -120,14 +121,16 @@ class PrivateMinimizer extends PrivateExpander {
     return false;
   }
 
-  List<String> minimizeStatementActions(Map statement, int minChars) {
-    Set minimized_actions = new Set();
+  List<dynamic> minimizeStatementActions(Map statement, int minChars) {
+    Set<dynamic> minimized_actions = new Set<dynamic>();
 
     if (statement['Effect'] != 'Allow')
-      throw new StatementNotMinifiableException('Minification does not currently work on Deny statements.');
+      throw new StatementNotMinifiableException(
+          'Minification does not currently work on Deny statements.');
 
-    var desired_actions = getDesiredActionsFromStatement(statement);
-    var denied_prefixes = getDeniedPrefixesFromDesired(desired_actions);
+    Set<dynamic> desired_actions = getDesiredActionsFromStatement(statement);
+    Set<dynamic> denied_prefixes =
+        getDeniedPrefixesFromDesired(desired_actions);
 
     for (var action in desired_actions) {
       if (denied_prefixes.contains(action)) {
@@ -136,15 +139,17 @@ class PrivateMinimizer extends PrivateExpander {
       }
 
       bool found_prefix = false;
+
       var prefixes = getPrefixesForAction(action);
+
       for (var prefix in prefixes) {
         var permission = prefix.split(':')[1];
         if (checkPermissionLength(permission, minChars)) {
           continue;
         }
 
-        if (! denied_prefixes.contains(prefix)) {
-          if (! desired_actions.contains(prefix)) {
+        if (!denied_prefixes.contains(prefix)) {
+          if (!desired_actions.contains(prefix)) {
             prefix = "$prefix*";
           }
           minimized_actions.add(prefix);
@@ -158,7 +163,7 @@ class PrivateMinimizer extends PrivateExpander {
       }
     }
 
-    List<String> minimized_actions_list = minimized_actions.toList();
+    List<dynamic> minimized_actions_list = minimized_actions.toList();
     minimized_actions_list.sort();
     return minimized_actions_list;
   }
